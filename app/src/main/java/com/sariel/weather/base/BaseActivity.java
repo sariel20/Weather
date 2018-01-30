@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.roger.gifloadinglibrary.GifLoadingView;
+import com.sariel.weather.R;
 import com.sariel.weather.net.ApiServiceible;
 
 import okhttp3.OkHttpClient;
@@ -40,14 +42,26 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
      **/
     protected final String TAG = this.getClass().getSimpleName();
 
+    private GifLoadingView mGifLoadingView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "BaseActivity->onCreate");
-
+        mGifLoadingView = new GifLoadingView();
+        mGifLoadingView.setImageResource(R.mipmap.gif_loading);
+        mGifLoadingView.setRadius(50);
         if (!isAllowScreenRoate) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+    }
+
+    public void showLoading() {
+        mGifLoadingView.show(getFragmentManager(), "");
+    }
+
+    public void dismissLoading(){
+        mGifLoadingView.dismiss();
     }
 
     /**

@@ -25,8 +25,8 @@ public class Utility {
             for (int i = 0; i < allProvinces.length(); i++) {
                 JSONObject provinceObject = allProvinces.getJSONObject(i);
                 Province province = new Province();
-                province.setId(provinceObject.getInt("id"));
-                province.setName(provinceObject.getString("name"));
+                province.setProvinceCode(provinceObject.getInt("id"));
+                province.setProvinceName(provinceObject.getString("name"));
                 province.save();
             }
             return true;
@@ -49,8 +49,8 @@ public class Utility {
             for (int i = 0; i < allCities.length(); i++) {
                 JSONObject cityObject = allCities.getJSONObject(i);
                 City city = new City();
-                city.setId(cityObject.getInt("id"));
-                city.setName(cityObject.getString("name"));
+                city.setCityCode(cityObject.getInt("id"));
+                city.setCityName(cityObject.getString("name"));
                 city.setProvinceId(provinceId);
                 city.save();
             }
@@ -63,6 +63,7 @@ public class Utility {
 
     /**
      * 解析县级数据
+     *
      * @param response
      * @param cityId
      * @return
@@ -73,8 +74,8 @@ public class Utility {
             for (int i = 0; i < allCountys.length(); i++) {
                 JSONObject countyObject = allCountys.getJSONObject(i);
                 County county = new County();
-                county.setId(countyObject.getInt("id"));
-                county.setName(countyObject.getString("name"));
+                county.setCountyCode(countyObject.getInt("id"));
+                county.setCountyName(countyObject.getString("name"));
                 county.setWeather_id(countyObject.getString("weather_id"));
                 county.setCityId(cityId);
                 county.save();

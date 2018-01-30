@@ -1,13 +1,8 @@
 package com.sariel.weather.net;
 
 import com.sariel.weather.vo.forecast.WeatherData;
-import com.sariel.weather.vo.location.City;
-import com.sariel.weather.vo.location.Province;
 import com.sariel.weather.vo.now.NowWeatherData;
 
-import java.util.List;
-
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -54,7 +49,7 @@ public interface ApiServiceible {
      * @return
      */
     @GET("china/{provinceId}")
-    Call<List<City>> getCitis(
+    Call<ResponseBody> getCitis(
             @Path("provinceId") int provinceId);
 
     /**
@@ -64,6 +59,6 @@ public interface ApiServiceible {
      * @return
      */
     @GET("china/{provinceId}/{cityId}")
-    Call<List<Province>> getCountyId(
+    Call<ResponseBody> getCountyId(
             @Path("provinceId") int provinceId, @Path("cityId") int cityId);
 }

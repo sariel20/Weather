@@ -10,12 +10,9 @@ import android.widget.TextView;
 
 import com.sariel.weather.R;
 import com.sariel.weather.base.BaseActivity;
-import com.sariel.weather.vo.forecast.HeWeather;
-import com.sariel.weather.vo.forecast.WeatherData;
 import com.sariel.weather.vo.now.NowWeather;
 import com.sariel.weather.vo.now.NowWeatherData;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,6 +66,7 @@ public class MainActivity extends BaseActivity {
 
 
     public void doBusiness() {
+        showLoading();
         Call<NowWeatherData> call = netWork().getNow(
                 "CN101010100");
         call.enqueue(new Callback<NowWeatherData>() {
@@ -80,11 +78,13 @@ public class MainActivity extends BaseActivity {
                 tv_now_cond.setText(nowWeather.getNow().getCond_txt());
                 tv_now_wind.setText(nowWeather.getNow().getWind_dir() + nowWeather.getNow().getWind_sc());
                 tv_uptime.setText("最后更新时间：" + nowWeather.getUpdate().getLoc());
+                dismissLoading();
             }
 
             @Override
             public void onFailure(Call<NowWeatherData> call, Throwable t) {
                 t.printStackTrace();
+                dismissLoading();
             }
         });
     }
