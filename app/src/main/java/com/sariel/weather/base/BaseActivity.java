@@ -50,18 +50,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         Log.d(TAG, "BaseActivity->onCreate");
         mGifLoadingView = new GifLoadingView();
         mGifLoadingView.setImageResource(R.mipmap.gif_loading);
-        mGifLoadingView.setRadius(50);
+        mGifLoadingView.setRadius(10);
         if (!isAllowScreenRoate) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
     public void showLoading() {
-        mGifLoadingView.show(getFragmentManager(), "");
+//        mGifLoadingView.show(getFragmentManager(), "");
     }
 
-    public void dismissLoading(){
-        mGifLoadingView.dismiss();
+    public void dismissLoading() {
+//        mGifLoadingView.dismiss();
     }
 
     /**

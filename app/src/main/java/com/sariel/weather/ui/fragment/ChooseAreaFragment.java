@@ -1,6 +1,7 @@
 package com.sariel.weather.ui.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.roger.gifloadinglibrary.GifLoadingView;
 import com.sariel.weather.R;
 import com.sariel.weather.net.ApiServiceible;
 import com.sariel.weather.net.Utility;
+import com.sariel.weather.ui.activity.MainActivity;
 import com.sariel.weather.vo.location.City;
 import com.sariel.weather.vo.location.County;
 import com.sariel.weather.vo.location.Province;
@@ -103,6 +105,9 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounty();
                 } else {
                     selectCounty = counties.get(position);
+                    startActivity(new Intent(
+                            getActivity(), MainActivity.class).putExtra("code", selectCounty.getWeather_id()));
+                    getActivity().finish();
                 }
             }
         });
@@ -123,6 +128,7 @@ public class ChooseAreaFragment extends Fragment {
     /*查询省级数据*/
     /*先查询数据库如果没有再请求服务器*/
     private void queryProvinces() {
+        iv_back.setVisibility(View.GONE);
         tv_choose_area.setText("中国");
         provinces = DataSupport.findAll(Province.class);
         if (provinces.size() > 0) {
@@ -140,6 +146,7 @@ public class ChooseAreaFragment extends Fragment {
 
     /*查詢市级数据*/
     private void queryCity() {
+        iv_back.setVisibility(View.VISIBLE);
         tv_choose_area.setText(selectProvince.getProvinceName());
         /*根据省级id查询市级信息*/
         cities = DataSupport.where(
