@@ -7,6 +7,7 @@ package com.sariel.weather.vo.now;
 public class Now {
     private String fl;//体感温度
     private String tmp;//温度
+    private int cond_code;//实况天气代码
     private String cond_txt;//实况天气状况
     private String wind_dir;//风向
     private String wind_sc;//风力
@@ -16,6 +17,10 @@ public class Now {
     private String pres;//大气压强
     private String vis;//能见度，默认单位：公里
     private String cloud;//云量
+
+    public int getCond_code() {
+        return cond_code;
+    }
 
     public String getFl() {
         return fl;

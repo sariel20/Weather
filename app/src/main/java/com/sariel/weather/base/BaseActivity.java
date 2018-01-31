@@ -67,7 +67,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     /**
      * 沉浸式状态栏
      */
-    private void steepStatusBar() {
+    public void steepStatusBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // 透明状态栏
             getWindow().addFlags(

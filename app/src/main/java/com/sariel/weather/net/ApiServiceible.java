@@ -1,6 +1,7 @@
 package com.sariel.weather.net;
 
 import com.sariel.weather.vo.forecast.WeatherData;
+import com.sariel.weather.vo.lifestyle.LifeStyleData;
 import com.sariel.weather.vo.now.NowWeatherData;
 
 import okhttp3.ResponseBody;
@@ -61,4 +62,20 @@ public interface ApiServiceible {
     @GET("china/{provinceId}/{cityId}")
     Call<ResponseBody> getCountyId(
             @Path("provinceId") int provinceId, @Path("cityId") int cityId);
+
+    /**
+     * 获取bing每日一图
+     *
+     * @return
+     */
+    @GET("bing_pic")
+    Call<ResponseBody> getPic();
+
+    /**
+     * 生活指数
+     *
+     * @return
+     */
+    @GET("lifestyle?key=a5b3ea1045b245e6bd55b18a951b72a2")
+    Call<LifeStyleData> getLifeStyle(@Query("location") String location);
 }
