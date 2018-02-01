@@ -13,7 +13,7 @@ public class LifeStyle {
     private String status;
     private Basic basic;
     private Update update;
-    private List<LifeStyleInfo> lifeStyleInfos;
+    private List<LifeStyleInfo> lifestyle;
 
     public String getStatus() {
         return status;
@@ -40,10 +40,10 @@ public class LifeStyle {
     }
 
     public List<LifeStyleInfo> getLifeStyleInfos() {
-        return lifeStyleInfos;
+        return lifestyle;
     }
 
     public void setLifeStyleInfos(List<LifeStyleInfo> lifeStyleInfos) {
-        this.lifeStyleInfos = lifeStyleInfos;
+        this.lifestyle = lifeStyleInfos;
     }
 }

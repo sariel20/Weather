@@ -1,12 +1,11 @@
 package com.sariel.weather.ui.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,11 +17,14 @@ import com.sariel.weather.R;
 import com.sariel.weather.base.BaseActivity;
 import com.sariel.weather.net.ApiServiceible;
 import com.sariel.weather.ui.adapter.ForecastAdapter;
+import com.sariel.weather.ui.adapter.LifeStyleAdapter;
 import com.sariel.weather.utils.GlideUtils;
 import com.sariel.weather.utils.WeatherIconUtil;
 import com.sariel.weather.vo.forecast.DailyForecast;
 import com.sariel.weather.vo.forecast.HeWeather;
 import com.sariel.weather.vo.forecast.WeatherData;
+import com.sariel.weather.vo.lifestyle.LifeStyleData;
+import com.sariel.weather.vo.lifestyle.LifeStyleInfo;
 import com.sariel.weather.vo.now.NowWeather;
 import com.sariel.weather.vo.now.NowWeatherData;
 
@@ -37,7 +39,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by LiangCheng on 2018/1/29.
@@ -78,8 +79,8 @@ public class MainActivity extends BaseActivity {
     /*获取并展示当天生活指数*/
     @BindView(R.id.rv_lifestyle)
     RecyclerView rv_lifestyle;
-
-    SharedPreferences pref;
+    private LifeStyleAdapter lifeStyleAdapter;
+    private List<LifeStyleInfo> lifeStyleInfos = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initView();
         initData();
+        initLifeStyleData();
     }
 
     @Override
@@ -99,6 +101,7 @@ public class MainActivity extends BaseActivity {
         }
         doBusiness();
         getForecast();
+        getLifeStyle();
     }
 
     public void initView() {
@@ -106,13 +109,13 @@ public class MainActivity extends BaseActivity {
 
         steepStatusBar();
 
-        pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String picUrl = pref.getString("bing_pic", null);
-        if (picUrl != null) {
-            new GlideUtils().loadImage(getApplicationContext(), picUrl, iv_background);
-        } else {
-            loadPic();
-        }
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+//        String picUrl = pref.getString("bing_pic", null);
+//        if (picUrl != null) {
+//            new GlideUtils().loadImage(getApplicationContext(), picUrl, iv_background);
+//        } else {
+        loadPic();
+//        }
 
         iv_weather_icon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +129,12 @@ public class MainActivity extends BaseActivity {
         rv_forecast.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         adapter = new ForecastAdapter(getApplicationContext(), dailyForecasts);
         rv_forecast.setAdapter(adapter);
+    }
+
+    private void initLifeStyleData() {
+        rv_lifestyle.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+        lifeStyleAdapter = new LifeStyleAdapter(getApplicationContext(), lifeStyleInfos);
+        rv_lifestyle.setAdapter(lifeStyleAdapter);
     }
 
     public void doBusiness() {
@@ -145,15 +154,16 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<NowWeatherData> call, Throwable t) {
+            public void onFailure(retrofit2.Call<NowWeatherData> call, Throwable t) {
                 t.printStackTrace();
             }
         });
     }
 
     private void getForecast() {
-        showLoading();
+
         Call<WeatherData> call = netWork().getWeatherData(areaCode);
+        showLoading();
         call.enqueue(new Callback<WeatherData>() {
             @Override
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
@@ -172,6 +182,22 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    private void getLifeStyle() {
+        Call<LifeStyleData> call = netWork().getLifeStyle(areaCode);
+        call.enqueue(new Callback<LifeStyleData>() {
+            @Override
+            public void onResponse(Call<LifeStyleData> call, Response<LifeStyleData> response) {
+                lifeStyleInfos.clear();
+                lifeStyleInfos.addAll(response.body().getHeWeather6().get(0).getLifeStyleInfos());
+                lifeStyleAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<LifeStyleData> call, Throwable t) {
+            }
+        });
+    }
+
     public void loadPic() {
         Call<ResponseBody> call = netWorkGetPic().getPic();
         call.enqueue(new Callback<ResponseBody>() {
@@ -179,10 +205,10 @@ public class MainActivity extends BaseActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     final String bingPic = response.body().string();
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(MainActivity.this).edit();
-                    editor.putString("bing_pic", bingPic);
-                    editor.apply();
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(MainActivity.this).edit();
+//                    editor.putString("bing_pic", bingPic);
+//                    editor.apply();
                     new GlideUtils().loadImage(getApplicationContext(), bingPic, iv_background);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -200,9 +226,7 @@ public class MainActivity extends BaseActivity {
         ApiServiceible apiServiceible = null;
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://guolin.tech/api/")
-                .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
         apiServiceible = retrofit.create(ApiServiceible.class);
         return apiServiceible;
     }

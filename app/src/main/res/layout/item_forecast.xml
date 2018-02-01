@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    android:padding="10dp">
+    android:layout_margin="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,7 +14,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="今天"
-            android:textSize="13sp"/>
+            android:textColor="#ffffff"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/tv_cond"
@@ -24,7 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="白天：晴/夜间：多云"
-            android:textSize="12sp"/>
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/tv_tmp"
@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="4/-5"
-            android:textSize="13sp"/>
+            android:textColor="#ffffff"
+            android:textSize="13sp" />
     </RelativeLayout>
-</android.support.v7.widget.CardView>
+</RelativeLayout>
