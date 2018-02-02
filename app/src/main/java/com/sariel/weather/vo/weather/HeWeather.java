@@ -1,4 +1,4 @@
-package com.sariel.weather.vo.forecast;
+package com.sariel.weather.vo.weather;
 
 import java.util.List;
 
@@ -11,6 +11,32 @@ public class HeWeather {
     private Basic basic;
     private Update update;
     private List<DailyForecast> daily_forecast;
+    private List<LifeStyleInfo> lifestyle;
+    private Now now;
+
+    public List<LifeStyleInfo> getLifestyle() {
+        return lifestyle;
+    }
+
+    public void setLifestyle(List<LifeStyleInfo> lifestyle) {
+        this.lifestyle = lifestyle;
+    }
+
+    public List<LifeStyleInfo> getLifeStyleInfos() {
+        return lifestyle;
+    }
+
+    public void setLifeStyleInfos(List<LifeStyleInfo> lifeStyleInfos) {
+        this.lifestyle = lifeStyleInfos;
+    }
+
+    public Now getNow() {
+        return now;
+    }
+
+    public void setNow(Now now) {
+        this.now = now;
+    }
 
     public String getStatus() {
         return status;

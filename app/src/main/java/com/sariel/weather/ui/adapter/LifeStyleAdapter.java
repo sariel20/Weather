@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sariel.weather.R;
-import com.sariel.weather.vo.lifestyle.LifeStyleInfo;
+import com.sariel.weather.vo.weather.LifeStyleInfo;
 
 import java.util.ArrayList;
 import java.util.List;

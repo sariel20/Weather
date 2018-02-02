@@ -1,5 +1,6 @@
 package com.sariel.weather.base;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -12,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.roger.gifloadinglibrary.GifLoadingView;
-import com.sariel.weather.R;
 import com.sariel.weather.net.ApiServiceible;
 
 import okhttp3.OkHttpClient;
@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by LiangCheng on 2018/1/29.
  */
 
-public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
+public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 是否沉浸状态栏
      **/
@@ -44,23 +44,37 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     private GifLoadingView mGifLoadingView;
 
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "BaseActivity->onCreate");
-        mGifLoadingView = new GifLoadingView();
-        mGifLoadingView.setImageResource(R.mipmap.gif_loading);
-        mGifLoadingView.setRadius(10);
+//        mGifLoadingView = new GifLoadingView();
+//        mGifLoadingView.setImageResource(R.mipmap.gif_loading);
+//        mGifLoadingView.setRadius(10);
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(BaseActivity.this);
+            progressDialog.setMessage("Loading");
+            progressDialog.setCancelable(false);
+        }
         if (!isAllowScreenRoate) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 
     public void showLoading() {
+        if (!progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+
 //        mGifLoadingView.show(getFragmentManager(), "");
     }
 
     public void dismissLoading() {
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
 //        mGifLoadingView.dismiss();
     }
 
@@ -152,7 +166,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
-                .baseUrl("https://free-api.heweather.com/s6/weather/")
+                .baseUrl("https://free-api.heweather.com/s6/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

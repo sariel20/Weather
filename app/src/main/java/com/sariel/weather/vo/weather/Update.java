@@ -1,4 +1,4 @@
-package com.sariel.weather.vo.forecast;
+package com.sariel.weather.vo.weather;
 
 /**
  * Created by LiangCheng on 2018/1/29.

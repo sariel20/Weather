@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sariel.weather.R;
-import com.sariel.weather.vo.forecast.DailyForecast;
+import com.sariel.weather.vo.weather.DailyForecast;
 
 import java.util.ArrayList;
 import java.util.List;

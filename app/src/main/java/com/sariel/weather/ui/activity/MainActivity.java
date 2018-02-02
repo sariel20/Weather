@@ -20,13 +20,10 @@ import com.sariel.weather.ui.adapter.ForecastAdapter;
 import com.sariel.weather.ui.adapter.LifeStyleAdapter;
 import com.sariel.weather.utils.GlideUtils;
 import com.sariel.weather.utils.WeatherIconUtil;
-import com.sariel.weather.vo.forecast.DailyForecast;
-import com.sariel.weather.vo.forecast.HeWeather;
-import com.sariel.weather.vo.forecast.WeatherData;
-import com.sariel.weather.vo.lifestyle.LifeStyleData;
-import com.sariel.weather.vo.lifestyle.LifeStyleInfo;
-import com.sariel.weather.vo.now.NowWeather;
-import com.sariel.weather.vo.now.NowWeatherData;
+import com.sariel.weather.vo.weather.DailyForecast;
+import com.sariel.weather.vo.weather.HeWeather;
+import com.sariel.weather.vo.weather.LifeStyleInfo;
+import com.sariel.weather.vo.weather.WeatherData;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,13 +92,17 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        code = getIntent().getStringExtra("code");
+        doBusiness();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        code = intent.getStringExtra("code");
         if (code != null) {
             areaCode = code;
         }
         doBusiness();
-        getForecast();
-        getLifeStyle();
     }
 
     public void initView() {
@@ -109,13 +110,7 @@ public class MainActivity extends BaseActivity {
 
         steepStatusBar();
 
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-//        String picUrl = pref.getString("bing_pic", null);
-//        if (picUrl != null) {
-//            new GlideUtils().loadImage(getApplicationContext(), picUrl, iv_background);
-//        } else {
         loadPic();
-//        }
 
         iv_weather_icon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,65 +133,47 @@ public class MainActivity extends BaseActivity {
     }
 
     public void doBusiness() {
-        Call<NowWeatherData> call = netWork().getNow(areaCode);
-        call.enqueue(new Callback<NowWeatherData>() {
-            @Override
-            public void onResponse(Call<NowWeatherData> call, Response<NowWeatherData> response) {
-                NowWeather nowWeather = response.body().getHeWeather6().get(0);
-                collapsingToolbar.setTitle(nowWeather.getBasic().getAdmin_area() + "  " + nowWeather.getBasic().getLocation());
-                tv_now_tmp.setText(nowWeather.getNow().getTmp());
-                tv_now_cond.setText(nowWeather.getNow().getCond_txt());
-                tv_now_wind.setText(nowWeather.getNow().getWind_dir() + nowWeather.getNow().getWind_sc());
-                tv_uptime.setText("最后更新时间：" + nowWeather.getUpdate().getLoc());
-                tv_now_fl.setText("体感温度：" + nowWeather.getNow().getFl() + " ℃");
-
-                new WeatherIconUtil().loadWeatherIcon(nowWeather.getNow().getCond_code(), iv_weather_icon);
-            }
-
-            @Override
-            public void onFailure(retrofit2.Call<NowWeatherData> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
-
-    private void getForecast() {
-
-        Call<WeatherData> call = netWork().getWeatherData(areaCode);
         showLoading();
+        Call<WeatherData> call = netWork().getWeatherData(areaCode);
         call.enqueue(new Callback<WeatherData>() {
             @Override
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
-                dailyForecasts.clear();
-                HeWeather heWeather = response.body().getHeWeather6().get(0);
-                dailyForecasts.addAll(heWeather.getDaily_forecast());
-                adapter.notifyDataSetChanged();
+                try {
+                    HeWeather weather = response.body().getHeWeather6().get(0);
+                /*实时天气*/
+                    collapsingToolbar.setTitle(weather.getBasic().getAdmin_area() + "  " + weather.getBasic().getLocation());
+                    tv_now_tmp.setText(weather.getNow().getTmp());
+                    tv_now_cond.setText(weather.getNow().getCond_txt());
+                    tv_now_wind.setText(weather.getNow().getWind_dir() + weather.getNow().getWind_sc());
+                    tv_uptime.setText("最后更新时间：" + weather.getUpdate().getLoc());
+                    tv_now_fl.setText("体感温度：" + weather.getNow().getFl() + " ℃");
+
+                    new WeatherIconUtil().loadWeatherIcon(weather.getNow().getCond_code(), iv_weather_icon);
+
+                /*未来三天天气*/
+                    dailyForecasts.clear();
+                    dailyForecasts.addAll(weather.getDaily_forecast());
+                    adapter.notifyDataSetChanged();
+
+                /*生活指数*/
+                    lifeStyleInfos.clear();
+                    lifeStyleInfos.addAll(weather.getLifeStyleInfos());
+                    lifeStyleAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 dismissLoading();
             }
 
             @Override
-            public void onFailure(Call<WeatherData> call, Throwable t) {
-
+            public void onFailure(retrofit2.Call<WeatherData> call, Throwable t) {
+                t.printStackTrace();
                 dismissLoading();
             }
         });
     }
 
-    private void getLifeStyle() {
-        Call<LifeStyleData> call = netWork().getLifeStyle(areaCode);
-        call.enqueue(new Callback<LifeStyleData>() {
-            @Override
-            public void onResponse(Call<LifeStyleData> call, Response<LifeStyleData> response) {
-                lifeStyleInfos.clear();
-                lifeStyleInfos.addAll(response.body().getHeWeather6().get(0).getLifeStyleInfos());
-                lifeStyleAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailure(Call<LifeStyleData> call, Throwable t) {
-            }
-        });
-    }
 
     public void loadPic() {
         Call<ResponseBody> call = netWorkGetPic().getPic();
@@ -205,10 +182,6 @@ public class MainActivity extends BaseActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     final String bingPic = response.body().string();
-//                    SharedPreferences.Editor editor = PreferenceManager
-//                            .getDefaultSharedPreferences(MainActivity.this).edit();
-//                    editor.putString("bing_pic", bingPic);
-//                    editor.apply();
                     new GlideUtils().loadImage(getApplicationContext(), bingPic, iv_background);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -231,7 +204,4 @@ public class MainActivity extends BaseActivity {
         return apiServiceible;
     }
 
-    @Override
-    public void onClick(View v) {
-    }
 }

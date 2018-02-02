@@ -1,6 +1,4 @@
-package com.sariel.weather.vo.forecast;
-
-import com.sariel.weather.vo.forecast.HeWeather;
+package com.sariel.weather.vo.weather;
 
 import java.util.List;
 
